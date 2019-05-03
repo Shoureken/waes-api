@@ -19,7 +19,7 @@ It is an REST API that accepts two JSON Base64 encoded, store and compare differ
 
 ## Compile and Run
 
- In the project folder run this command to compile and start the application, this also start an H2 database in memory and run the migrations
+ In the project folder run this command to compile and start the application, this also starts an H2 database in memory and run the migrations
  > mvn clean spring-boot:run
  
 ## API Documentation (Swagger)
@@ -52,7 +52,7 @@ Possible API responses are:
 * 200 - If it succeed to store
 * 400 - If payload is invalid
 
-### Consult Diif
+### Consult Diff
 To consult the diff result you must provide some data on both sides (left and right) on the same ID
 >GET http://localhost:8080/v1/diff/{ID}
 * "id" - String - ID that you used to store the data
@@ -65,15 +65,15 @@ This will return a JSON containing the result, each can be:
 # Project Info
 
 The project follow a well-know structure of microservice, using REST and MVC. 
-Since it is a demonstration project I kept it simple, divided in tree layer basically
-* REST Controller - That receive that requests
+Since it is a demonstration project I kept it simple, divided in three layer basically
+* REST Controller - That receive the requests and call business
 * Business - Holds the application logic
 * Persistency - The layer that stores and retrieve from database 
 
 ## Decisions
 1. I used an in memory database because it is a demonstration, this way wont be necessary a 
 pre-installed database. But remember that it is very easy to switch to another database if necessary
-2. Flyway was used because is very easy to use and work out of the box with Spring
+2. Flyway was used because is very easy to use and works almost out of the box with Spring
 3. Swagger almost doesnt need justification, it is widely used to create API specifications
 
 
