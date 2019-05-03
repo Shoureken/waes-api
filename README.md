@@ -43,7 +43,7 @@ The last version of Javadoc is available inside the folder "apidocs". If want to
 
 # API Instructions
 
-You can use Swagger interface to manually test the application
+You can use [Swagger](http://localhost:8080/swagger-ui.html) interface to manually test the application
 
 ### Store Data
 To store data you must to provide a JSON base64 string as payload of a POST request
