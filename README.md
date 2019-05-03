@@ -33,10 +33,17 @@ It is an REST API that accepts two JSON Base64 encoded, store and compare differ
 - [Database console](http://localhost:8080/h2-console/) 
 
 ## Run Tests
-To run the tests, you just have to run this command in the project folder
+To run the tests, you just have to run this command in the project folder. It also generates 
+[JaCoCo](https://www.jacoco.org/jacoco/trunk/index.html) report also available inside "jacoco" folder
 > mvn test
 
+## Javadoc
+The last version of Javadoc is available inside the folder "apidocs". If want to generate you just have to run
+> mvn javadoc:javadoc
+
 # API Instructions
+
+You can use Swagger interface to manually test the application
 
 ### Store Data
 To store data you must to provide a JSON base64 string as payload of a POST request

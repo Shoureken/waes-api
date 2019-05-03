@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RestExceptionHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">waes-test</a> &gt; <a href="index.source.html" class="el_package">com.dematte.waestest.controller</a> &gt; <span class="el_source">RestExceptionHandler.java</span></div><h1>RestExceptionHandler.java</h1><pre class="source lang-java linenums">package com.dematte.waestest.controller;
+
+import com.dematte.waestest.exception.BadRequestException;
+import com.dematte.waestest.exception.NotFoundException;
+import com.dematte.waestest.model.dto.ErrorDTO;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+/**
+ * ExceptionHandler methods to be shared across Controllers.
+ *
+ * @author Rodolfo Chiuff Dematte
+ * @since 2019-05-01
+ */
+@ControllerAdvice
+<span class="fc" id="L19">public class RestExceptionHandler extends ResponseEntityExceptionHandler {</span>
+
+	/**
+	 * Handle any Exception that extends from NotFoundException returning a HTTP status code NOT_FOUND (404)
+	 *
+	 * @param e Exception to be handled
+	 * @return {@link ErrorDTO} containing the error message
+	 */
+	@ExceptionHandler(NotFoundException.class)
+	public ResponseEntity&lt;ErrorDTO&gt; handleNotFoundException(NotFoundException e) {
+<span class="fc" id="L29">		final ErrorDTO error = new ErrorDTO(e.getMessage());</span>
+<span class="fc" id="L30">		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);</span>
+	}
+
+	/**
+	 * Handle any Exception that extends from BadRequestException returning a HTTP status code BAD_REQUEST (400)
+	 *
+	 * @param e Exception to be handled
+	 * @return {@link ErrorDTO} containing the error message
+	 */
+	@ExceptionHandler(BadRequestException.class)
+	public ResponseEntity&lt;ErrorDTO&gt; handleBadRequestException(BadRequestException e) {
+<span class="fc" id="L41">		final ErrorDTO error = new ErrorDTO(e.getMessage());</span>
+<span class="fc" id="L42">		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);</span>
+	}
+
+	/**
+	 * Handle any unexpected Exception returning a HTTP status code INTERNAL_SERVER_ERROR (500)
+	 *
+	 * @param e Exception to be handled
+	 * @return {@link ErrorDTO} containing the error message
+	 */
+	@ExceptionHandler(Throwable.class)
+	public ResponseEntity&lt;ErrorDTO&gt; handleThrowable(Throwable e) {
+<span class="nc" id="L53">		final ErrorDTO error = new ErrorDTO(e.getMessage());</span>
+<span class="nc" id="L54">		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

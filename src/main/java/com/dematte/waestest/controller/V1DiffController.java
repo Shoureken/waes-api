@@ -45,9 +45,8 @@ public class V1DiffController {
 	 * Method handle GET request to consult Diff result based on the "id" provided
 	 *
 	 * @param id Path parameter containing the record identification to consult
-	 * @return {@link RecordDiffResult) representation of the result
+	 * @return RecordDiffResult representation of the result
 	 */
-
 	@ApiResponses({
 			              @ApiResponse(code = 200, message = "OK", response = RecordDiffResult.class),
 			              @ApiResponse(code = 404, message = "Not Found", response = ErrorDTO.class),

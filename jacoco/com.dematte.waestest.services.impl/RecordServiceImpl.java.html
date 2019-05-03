@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RecordServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">waes-test</a> &gt; <a href="index.source.html" class="el_package">com.dematte.waestest.services.impl</a> &gt; <span class="el_source">RecordServiceImpl.java</span></div><h1>RecordServiceImpl.java</h1><pre class="source lang-java linenums">package com.dematte.waestest.services.impl;
+
+import java.util.Base64;
+import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+
+import com.dematte.waestest.exception.InvalidData;
+import com.dematte.waestest.exception.RecordNotFoundException;
+import com.dematte.waestest.model.Side;
+import com.dematte.waestest.model.entities.Record;
+import com.dematte.waestest.repositories.RecordRepository;
+import com.dematte.waestest.services.RecordService;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.springframework.stereotype.Service;
+
+import static com.dematte.waestest.model.Side.LEFT;
+
+<span class="fc" id="L19">@RequiredArgsConstructor</span>
+@Service
+public class RecordServiceImpl implements RecordService {
+
+	private final RecordRepository repository;
+
+	@Override
+	public Record save(final String id, final Side side, final byte[] value) {
+		// Try to Base64 decode
+		final byte[] decoded;
+		try {
+<span class="fc" id="L30">			decoded = decode(value);</span>
+<span class="fc" id="L31">		} catch (IllegalArgumentException e) {</span>
+<span class="fc" id="L32">			throw new InvalidData(&quot;Data can not be decoded&quot;, e);</span>
+<span class="fc" id="L33">		}</span>
+
+		// Check if is a valid JSON
+		try {
+<span class="fc" id="L37">			new JSONObject(new String(decoded));</span>
+<span class="fc" id="L38">		} catch (JSONException e) {</span>
+<span class="fc" id="L39">			throw new InvalidData(&quot;Data must be in JSON format&quot;, e);</span>
+<span class="fc" id="L40">		}</span>
+
+		// Check if we already have a record with same id
+<span class="fc" id="L43">		final Optional&lt;Record&gt; optional = repository.findById(id);</span>
+
+		// Case we dont have, start new one
+<span class="fc" id="L46">		final Record record = optional.orElse(new Record());</span>
+<span class="fc" id="L47">		record.setId(id);</span>
+<span class="fc" id="L48">		fillRecordData(record, side, decoded);</span>
+
+		// Persist the data
+<span class="fc" id="L51">		return repository.save(record);</span>
+	}
+
+	private static byte[] decode(byte[] bytes) {
+<span class="fc" id="L55">		return Base64.getDecoder().decode(bytes);</span>
+	}
+
+	/**
+	 * Fill data according side parameter
+	 *
+	 * @param record Record to be filled
+	 * @param side   Side to fill
+	 * @param value  Data to be filled with
+	 */
+	private void fillRecordData(final Record record, final Side side, final byte[] value) {
+<span class="fc bfc" id="L66" title="All 2 branches covered.">		if (LEFT == side) {</span>
+<span class="fc" id="L67">			record.setLeft(value);</span>
+<span class="fc" id="L68">			return;</span>
+		}
+<span class="fc" id="L70">		record.setRight(value);</span>
+<span class="fc" id="L71">	}</span>
+
+	@Override
+	public Record get(final String id) {
+<span class="fc" id="L75">		final Optional&lt;Record&gt; optional = repository.findById(id);</span>
+<span class="fc" id="L76">		return optional.orElseThrow(() -&gt; new RecordNotFoundException(&quot;Record not found with id '&quot; + id + &quot;'&quot;));</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

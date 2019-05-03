@@ -1,0 +1,10 @@
+com.dematte.waestest
+com.dematte.waestest.config
+com.dematte.waestest.controller
+com.dematte.waestest.exception
+com.dematte.waestest.model
+com.dematte.waestest.model.dto
+com.dematte.waestest.model.entities
+com.dematte.waestest.repositories
+com.dematte.waestest.services
+com.dematte.waestest.services.impl

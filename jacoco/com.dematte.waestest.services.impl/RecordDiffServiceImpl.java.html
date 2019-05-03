@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RecordDiffServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">waes-test</a> &gt; <a href="index.source.html" class="el_package">com.dematte.waestest.services.impl</a> &gt; <span class="el_source">RecordDiffServiceImpl.java</span></div><h1>RecordDiffServiceImpl.java</h1><pre class="source lang-java linenums">package com.dematte.waestest.services.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+
+import com.dematte.waestest.exception.MissingDataException;
+import com.dematte.waestest.model.dto.DiffPart;
+import com.dematte.waestest.model.dto.DiffResult;
+import com.dematte.waestest.model.dto.RecordDiffResult;
+import com.dematte.waestest.model.entities.Record;
+import com.dematte.waestest.services.RecordDiffService;
+import org.springframework.stereotype.Service;
+
+<span class="fc" id="L15">@RequiredArgsConstructor</span>
+@Service
+public class RecordDiffServiceImpl implements RecordDiffService {
+
+	@Override
+	public RecordDiffResult computeDiff(final Record record) {
+
+		// Fist of all we need to check if we has both data
+<span class="fc" id="L23">		final byte[] left = record.getLeft();</span>
+<span class="fc bfc" id="L24" title="All 2 branches covered.">		if (left == null) {</span>
+<span class="fc" id="L25">			throw new MissingDataException(&quot;Left data is missing&quot;);</span>
+		}
+<span class="fc" id="L27">		final byte[] right = record.getRight();</span>
+<span class="fc bfc" id="L28" title="All 2 branches covered.">		if (right == null) {</span>
+<span class="fc" id="L29">			throw new MissingDataException(&quot;Right data is missing&quot;);</span>
+		}
+
+		// Check if sizes are different
+<span class="fc bfc" id="L33" title="All 2 branches covered.">		if (left.length != right.length) {</span>
+<span class="fc" id="L34">			return new RecordDiffResult(DiffResult.DIFFERENT_LENGTH);</span>
+		}
+
+		// Since sizes are equals, we have to check if the data is the same, comparing byte by byte
+
+		// Try to find differences
+<span class="fc" id="L40">		final List&lt;DiffPart&gt; diffParts = findDiffParts(left, right);</span>
+
+		// If no difference was found, the data are the same
+<span class="fc bfc" id="L43" title="All 2 branches covered.">		if (diffParts.isEmpty()) {</span>
+<span class="fc" id="L44">			return new RecordDiffResult(DiffResult.EQUAL);</span>
+		}
+
+		// Since there are differences, we return that
+<span class="fc" id="L48">		return new RecordDiffResult(DiffResult.NOT_EQUAL, diffParts);</span>
+	}
+
+	private List&lt;DiffPart&gt; findDiffParts(final byte[] left, final byte[] right) {
+<span class="fc" id="L52">		final List&lt;DiffPart&gt; result = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L54">		int offset = -1;</span>
+<span class="fc" id="L55">		int lenght = 1;</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">		for (int i = 0; i &lt; left.length; i++) {</span>
+
+			// Check if bytes are equals
+<span class="fc bfc" id="L59" title="All 2 branches covered.">			if (left[i] == right[i]) {</span>
+
+				// Since they are equals, we have to check if we were counting
+<span class="fc bfc" id="L62" title="All 2 branches covered.">				if (offset &lt; 0) {</span>
+
+					// If not just go to next byte
+<span class="fc" id="L65">					continue;</span>
+				}
+
+				// Since we were counting, we found the end the end of the difference
+<span class="fc" id="L69">				result.add(new DiffPart(offset, lenght));</span>
+
+				// reset counters
+<span class="fc" id="L72">				offset = -1;</span>
+<span class="fc" id="L73">				lenght = 1;</span>
+<span class="fc" id="L74">				continue;</span>
+			}
+
+			// Since bytes were not equals, we have to check if we were already counting
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">			if (offset &lt; 0) {</span>
+				// If not we set offset and go to next byte
+<span class="fc" id="L80">				offset = i;</span>
+<span class="fc" id="L81">				continue;</span>
+			}
+
+			// Actualy we were already counting, so just increment counting
+<span class="nc" id="L85">			lenght++;</span>
+		}
+
+		// We reach the end of array, but if we were count it means the last part is different
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">		if (offset &gt; 0) {</span>
+<span class="nc" id="L90">			result.add(new DiffPart(offset, lenght));</span>
+		}
+
+<span class="fc" id="L93">		return result;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>
